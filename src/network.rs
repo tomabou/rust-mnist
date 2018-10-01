@@ -1,5 +1,7 @@
 mod matrix;
 
+use matrix::{Vector,Matrix};
+
 struct Network {
     W1: matrix::Matrix,
     W2: matrix::Matrix,
@@ -33,5 +35,14 @@ impl Network{
     #[test]
     fn test_new(){
         new(2,3,4);
+    }
+
+    pub fn forward(v: Vector) -> Vector{
+        let a1 = matrix::mat_mul(W1, v);
+        let h1 = Vector::relu(a1);
+        let a2 = matrix::mat_mul(W2, h1);
+        let h2 = Vector::relu(a2);
+        let a3 = matrix::mat_mul(W3, h2);
+        let h3 = Vector::relu(a3);
     }
 }

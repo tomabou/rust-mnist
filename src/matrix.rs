@@ -1,5 +1,6 @@
 use rand;
 use rand::distributions::{Distribution, Normal};
+use std::f32;
 
 #[derive(Debug, PartialEq)]
 pub struct Matrix {
@@ -126,6 +127,34 @@ impl Vector {
         Vector {
             val: v,
         }
-
+    }
+    pub fn softmax(x: &Vector) -> Vector {
+        let mut v = x.val.clone();
+        for i in 0..v.len(){
+            v[i] = x.val[i].exp();           
+        }
+        let mut sum = 0.0;
+        for t in &v{
+            sum += *t;
+        }
+        for t in &mut v{
+            *t /= sum;
+        }
+        Vector{val:v}
     }
 }
+#[test]
+fn test_softmax(){
+    let x = Vector {
+        val: vec![0.5, 0.5],
+    };
+    let y = Vector {
+        val: vec![1.0, 1.0],
+    };
+    assert_eq!(Vector::softmax(&y),x);
+    let z = Vector {
+        val: vec![2.0, 1.0],
+    };
+    println!("{:?}",Vector::softmax(&z))
+}
+
