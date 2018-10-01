@@ -109,6 +109,12 @@ fn test_mut_mul() {
 }
 
 impl Vector {
+    pub fn add(mut self, m: &Vector)->Vector {
+        for i in 0..self.val.len(){
+            self.val[i] += m.val[i];
+        }
+        self
+    }
     pub fn relu(v: &Vector) -> Vector {
         let mut res = Vector {
             val: vec![0.0; v.val.len()],
