@@ -16,7 +16,22 @@ struct Network {
 }
 
 impl Network{
-    pub fn new() -> Network{
-
+    pub fn new(I:usize, H: usize, C: usize) -> Network{
+        W1: Matrix::new(I,H),
+        W2: Matrix::new(H,H),
+        W3: Matrix::new(H,C),
+        b1: Vector::new(H),
+        b2: Vector::new(H),
+        b3: Vector::new(C),
+        grad_W1: Matrix::new(I,H),
+        grad_W2: Matrix::new(H,H),
+        grad_W3: Matrix::new(H,C),
+        grad_b1: Vector::new(H),
+        grad_b2: Vector::new(H),
+        grad_b3: Vector::new(C),
+    }
+    #[test]
+    fn test_new(){
+        new(2,3,4);
     }
 }

@@ -1,7 +1,5 @@
 use rand;
 use rand::distributions::{Distribution, Normal};
-use std::ops::Add;
-use std::ops::AddAssign;
 
 #[derive(Debug, PartialEq)]
 pub struct Matrix {
@@ -118,5 +116,16 @@ impl Vector {
             res.val[i] = if v.val[i] > 0.0 { v.val[i] } else { 0.0 };
         }
         res
+    }
+
+    pub fn new(x: usize) -> Vector{
+        let normal = Normal::new(0.0, 1.0);
+        let v = (0..x)
+            .map(|_| normal.sample(&mut rand::thread_rng()) as f32)
+            .collect();
+        Vector {
+            val: v,
+        }
+
     }
 }
