@@ -1,3 +1,5 @@
+extern crate rand;
+
 mod data;
 mod matrix;
 

@@ -1,5 +1,8 @@
 use std::ops::Add;
 use std::ops::AddAssign;
+use rand::distributions::{Normal, Distribution};
+use rand;
+
 
 #[derive(Debug,PartialEq)]
 pub struct Matrix{
@@ -29,6 +32,13 @@ impl Matrix{
         }
         res
     }    
+    pub fn new(x: usize, y: usize)-> Matrix{
+        let normal = Normal::new(0.0,1.0);
+        let v = (0..x*y).map(|_|{
+            normal.sample(&mut rand::thread_rng()) as f32
+        }).collect();
+        Matrix{shape:(y,x), val: v}
+    }
 }
 
 #[test]
@@ -62,4 +72,12 @@ fn test_mut_mul(){
     let x = Matrix{shape:(2,2),val:vec![1.0,2.0,3.0,4.0]};
     let y = Vector{val:vec![1.0,2.0]};
     assert_eq!(mat_mul(&x, &y),Vector{val:vec![5.0,11.0]});
+}
+
+pub fn relu(v: &Vector) -> Vector{
+    let mut res = Vector{val: vec![0.0;v.val.len()]};
+    for i in 0..v.val.len(){
+        res.val[i] = if v.val[i] > 0.0 {v.val[i]} else {0.0};
+    }
+    res
 }
