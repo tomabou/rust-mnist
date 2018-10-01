@@ -1,39 +1,20 @@
-#[macro_use]
-extern crate error_chain;
-extern crate reqwest;
-extern crate tempdir;
 
-use std::io::copy;
-use std::fs::File;
-use tempdir::TempDir;
-
-error_chain! {
-    foreign_links {
-        Io(std::io::Error);
-        HttpRequest(reqwest::Error);
-    }
+fn main(){
+    println!("Hello World");
+    read_file();
 }
 
-fn run() -> Result<()> {
-    let tmp_dir = TempDir::new("example")?;
-    let target = "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz";
-    let mut response = reqwest::get(target)?;
+use std::{fs, slice};
+use std::io::{BufReader, Read};
+use std::path::Path;
 
-    let mut dest = {
-        let fname = response
-            .url()
-            .path_segments()
-            .and_then(|segments| segments.last())
-            .and_then(|name| if name.is_empty() { None } else { Some(name) })
-            .unwrap_or("tmp.bin");
-
-        println!("file to download: '{}'", fname);
-        let fname = tmp_dir.path().join(fname);
-        println!("will be located under: '{:?}'", fname);
-        File::create(fname)?
-    };
-    copy(&mut response, &mut dest)?;
-    Ok(())
+fn read_file() {
+    let path = Path::new("../data/t10k-labels-idx1-ubyte");
+    let mut f = BufReader::new(fs::File::open(&path).unwrap());
+    let mut m: i32 = 0;
+    let buf = unsafe{slice::from_raw_parts_mut(&mut m as *mut i32 as *mut u8, 4) };
+    f.read_exact(buf).unwrap();
+    m = i32::from_be(m);
+    
+    println!("{}",m);
 }
-
-quick_main!(run);
