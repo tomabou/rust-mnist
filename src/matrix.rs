@@ -19,8 +19,17 @@ impl Matrix{
             self.val[i] += m.val[i];
         }
     }
+    fn transpose(m: &Matrix) -> Matrix{
+        let (x,y) = m.shape;
+        let mut res = Matrix{shape:(y,x), val:vec![0.0; x*y]};
+        for i in 0..x{
+            for j in 0..y{
+                res.val[j*y+i] = m.val[i*x+j];
+            }
+        }
+        res
+    }    
 }
-
 
 #[test]
 fn test_add(){
@@ -31,6 +40,11 @@ fn test_add(){
     m.add(&n);
     let ans = Matrix{shape:(2,2),val:vec![2.0,4.0,6.0,8.0]};
     assert_eq!(m,ans);
+}
+#[test]
+fn test_transpose(){
+    let n = Matrix{shape:(2,2),val:vec![1.0,2.0,3.0,4.0]};
+    assert_eq!(Matrix::transpose(&n),Matrix{shape:(2,2), val:vec![1.0,3.0,2.0,4.0]} );
 }
 
 pub fn mat_mul(m: &Matrix, v: &Vector) -> Vector{
