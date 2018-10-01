@@ -1,4 +1,5 @@
 mod data;
+mod matrix;
 
 fn main(){
     println!("Hello World");
