@@ -1,5 +1,5 @@
-use matrix::{Vector,Matrix};
 use matrix;
+use matrix::{Matrix, Vector};
 
 pub struct Network {
     w1: Matrix,
@@ -21,31 +21,31 @@ pub struct Network {
     db3: Vector,
 }
 
-impl Network{
-    pub fn new(i:usize, h: usize, c: usize) -> Network{
-        Network{
-            w1: Matrix::new(i,h),
-            w2: Matrix::new(h,h),
-            w3: Matrix::new(h,c),
+impl Network {
+    pub fn new(i: usize, h: usize, c: usize) -> Network {
+        Network {
+            w1: Matrix::new(i, h),
+            w2: Matrix::new(h, h),
+            w3: Matrix::new(h, c),
             b1: Vector::new(h),
             b2: Vector::new(h),
             b3: Vector::new(c),
             a1: Vector::new(h),
             a2: Vector::new(h),
-            h0: Vector::new(i), 
-            h1: Vector::new(i), 
-            h2: Vector::new(i), 
-            dw1: Matrix::new(i,h),
-            dw2: Matrix::new(h,h),
-            dw3: Matrix::new(h,c),
+            h0: Vector::new(i),
+            h1: Vector::new(i),
+            h2: Vector::new(i),
+            dw1: Matrix::new(i, h),
+            dw2: Matrix::new(h, h),
+            dw3: Matrix::new(h, c),
             db1: Vector::new(h),
             db2: Vector::new(h),
             db3: Vector::new(c),
         }
     }
 
-    pub fn forward(&mut self,v: Vector) -> Vector{
-        self.h0  =v;
+    pub fn forward(&mut self, v: Vector) -> Vector {
+        self.h0 = v;
         self.a1 = matrix::mat_mul(&self.w1, &self.h0).add(&self.b1);
         self.h1 = Vector::relu(&self.a1);
         self.a2 = matrix::mat_mul(&self.w2, &self.h1).add(&self.b2);
@@ -53,7 +53,7 @@ impl Network{
         let y = matrix::mat_mul(&self.w3, &self.h2).add(&self.b3);
         Vector::softmax(&y)
     }
-    pub fn backward(&mut self, gy: Vector){
+    pub fn backward(&mut self, gy: Vector) {
         let gh2 = matrix::mat_tmul(&self.w3, &gy);
         let ga2 = gh2.back(&self.a2);
         let gh1 = matrix::mat_tmul(&self.w2, &ga2);
@@ -65,7 +65,15 @@ impl Network{
         self.calc_d(&gw1, &gw2, &gw3, &ga1, &ga2, &gy);
     }
 
-    fn calc_d(&mut self, gw1:&Matrix,gw2:&Matrix,gw3:&Matrix,gb1:&Vector,gb2:&Vector,gb3:&Vector){
+    fn calc_d(
+        &mut self,
+        gw1: &Matrix,
+        gw2: &Matrix,
+        gw3: &Matrix,
+        gb1: &Vector,
+        gb2: &Vector,
+        gb3: &Vector,
+    ) {
         self.db1.times(0.9);
         self.db1.mut_add(gb1);
         self.db2.times(0.9);
@@ -80,7 +88,7 @@ impl Network{
         self.dw3.mut_add(gw3);
     }
 
-    pub     fn update(&mut self) {
+    pub fn update(&mut self) {
         let lr = 0.001;
         self.b1.mut_madd(&self.db1, lr);
         self.b2.mut_madd(&self.db2, lr);

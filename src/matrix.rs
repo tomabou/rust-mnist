@@ -2,48 +2,48 @@ use rand;
 use rand::distributions::{Distribution, Normal};
 use std::f32;
 
-#[derive(Debug, PartialEq,Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Matrix {
     shape: (usize, usize),
     val: Vec<f32>,
 }
 
-#[derive(Debug, PartialEq,Clone)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Vector {
     val: Vec<f32>,
 }
 
 impl Matrix {
     pub fn mut_add(&mut self, m: &Matrix) {
-        for i in 0..self.val.len(){
+        for i in 0..self.val.len() {
             self.val[i] += m.val[i];
         }
     }
-    pub fn mut_madd(&mut self, m: &Matrix,x: f32) {
-        for i in 0..self.val.len(){
-            self.val[i] += m.val[i]*x;
+    pub fn mut_madd(&mut self, m: &Matrix, x: f32) {
+        for i in 0..self.val.len() {
+            self.val[i] += m.val[i] * x;
         }
     }
-    pub fn times(&mut self, m: f32){
-        for i in 0..self.val.len(){
+    pub fn times(&mut self, m: f32) {
+        for i in 0..self.val.len() {
             self.val[i] *= m;
         }
     }
-    pub fn from_vec(a: &Vector,b: &Vector) -> Matrix{
-        let (x, y) = (a.val.len(),b.val.len());
+    pub fn from_vec(a: &Vector, b: &Vector) -> Matrix {
+        let (x, y) = (a.val.len(), b.val.len());
         let mut res = Matrix {
-            shape: (x,y),
+            shape: (x, y),
             val: vec![0.0; x * y],
         };
         for i in 0..x {
             for j in 0..y {
-                res.val[i*y+j] = a.val[i] * b.val[j];
+                res.val[i * y + j] = a.val[i] * b.val[j];
             }
         }
         res
     }
     pub fn new(x: usize, y: usize) -> Matrix {
-        let normal = Normal::new(0.0, 1.0/x as f64);
+        let normal = Normal::new(0.0, 1.0 / x as f64);
         let v = (0..x * y)
             .map(|_| normal.sample(&mut rand::thread_rng()) as f32)
             .collect();
@@ -55,19 +55,19 @@ impl Matrix {
 }
 
 #[test]
-fn test_from_vec(){
+fn test_from_vec() {
     let x = Vector {
         val: vec![1.0, 3.0],
     };
     let y = Vector {
-        val: vec![1.0, 2.0,3.0],
+        val: vec![1.0, 2.0, 3.0],
     };
     let res = Matrix::from_vec(&x, &y);
     let m = Matrix {
         shape: (2, 3),
-        val: vec![1.0, 2.0,3.0,3.0,6.0,9.0],
+        val: vec![1.0, 2.0, 3.0, 3.0, 6.0, 9.0],
     };
-    assert_eq!(m,res);
+    assert_eq!(m, res);
 }
 
 #[test]
@@ -149,23 +149,23 @@ fn test_mut_mul() {
 
 impl Vector {
     pub fn mut_add(&mut self, m: &Vector) {
-        for i in 0..self.val.len(){
+        for i in 0..self.val.len() {
             self.val[i] += m.val[i];
         }
     }
     pub fn mut_madd(&mut self, m: &Vector, x: f32) {
-        for i in 0..self.val.len(){
+        for i in 0..self.val.len() {
             self.val[i] += m.val[i] * x;
         }
     }
-    pub fn add(mut self, m: &Vector)->Vector {
-        for i in 0..self.val.len(){
+    pub fn add(mut self, m: &Vector) -> Vector {
+        for i in 0..self.val.len() {
             self.val[i] += m.val[i];
         }
         self
     }
-    pub fn times(&mut self, m: f32){
-        for i in 0..self.val.len(){
+    pub fn times(&mut self, m: f32) {
+        for i in 0..self.val.len() {
             self.val[i] *= m;
         }
     }
@@ -179,37 +179,33 @@ impl Vector {
         res
     }
 
-    pub fn new(x: usize) -> Vector{
+    pub fn new(x: usize) -> Vector {
         let normal = Normal::new(0.0, 1.0);
         let v = (0..x)
             .map(|_| normal.sample(&mut rand::thread_rng()) as f32)
             .collect();
-        Vector {
-            val: v,
-        }
+        Vector { val: v }
     }
     pub fn softmax(x: &Vector) -> Vector {
         let mut v = x.val.clone();
-        for i in 0..v.len(){
-            v[i] = x.val[i].exp();           
+        for i in 0..v.len() {
+            v[i] = x.val[i].exp();
         }
         let mut sum = 0.0;
-        for t in &v{
+        for t in &v {
             sum += *t;
         }
-        for t in &mut v{
+        for t in &mut v {
             *t /= sum;
         }
-        Vector{val:v}
+        Vector { val: v }
     }
-    pub fn from_data(d: &[u8]  ) -> Vector{
-        let v = d.into_iter().map(|x|{
-            *x as f32
-        }).collect();
-        Vector{val:v}
+    pub fn from_data(d: &[u8]) -> Vector {
+        let v = d.into_iter().map(|x| *x as f32).collect();
+        Vector { val: v }
     }
-    pub fn back(&self, a: &Vector) -> Vector{
-        assert_eq!(self.val.len(),a.val.len());
+    pub fn back(&self, a: &Vector) -> Vector {
+        assert_eq!(self.val.len(), a.val.len());
         let mut res = Vector {
             val: vec![0.0; a.val.len()],
         };
@@ -220,17 +216,16 @@ impl Vector {
     }
 }
 #[test]
-fn test_softmax(){
+fn test_softmax() {
     let x = Vector {
         val: vec![0.5, 0.5],
     };
     let y = Vector {
         val: vec![1.0, 1.0],
     };
-    assert_eq!(Vector::softmax(&y),x);
+    assert_eq!(Vector::softmax(&y), x);
     let z = Vector {
-        val: vec![2.0, 1.0,0.0],
+        val: vec![2.0, 1.0, 0.0],
     };
-    println!("{:?}",Vector::softmax(&z))
+    println!("{:?}", Vector::softmax(&z))
 }
-
