@@ -89,7 +89,7 @@ impl Network {
     }
 
     pub fn update(&mut self) {
-        let lr = 0.001;
+        let lr = -0.001;
         self.b1.mut_madd(&self.db1, lr);
         self.b2.mut_madd(&self.db2, lr);
         self.b3.mut_madd(&self.db3, lr);

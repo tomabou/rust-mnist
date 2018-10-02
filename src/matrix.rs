@@ -10,7 +10,7 @@ pub struct Matrix {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vector {
-    val: Vec<f32>,
+    pub val: Vec<f32>,
 }
 
 impl Matrix {
@@ -188,8 +188,12 @@ impl Vector {
     }
     pub fn softmax(x: &Vector) -> Vector {
         let mut v = x.val.clone();
+        let mut max = 0.0;
+        for k in &x.val{
+            max = if *k > max {*k} else {max};
+        }
         for i in 0..v.len() {
-            v[i] = x.val[i].exp();
+            v[i] = (x.val[i]-max).exp();
         }
         let mut sum = 0.0;
         for t in &v {
@@ -213,6 +217,9 @@ impl Vector {
             res.val[i] = if a.val[i] > 0.0 { self.val[i] } else { 0.0 };
         }
         res
+    }
+    pub fn sub_label(&mut self, label: usize){
+        self.val[label] -= 1.0;
     }
 }
 #[test]
