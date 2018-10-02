@@ -42,6 +42,19 @@ impl Matrix {
         }
         res
     }
+    pub fn from_vec(a: &Vector,b: &Vector) -> Matrix{
+        let (x, y) = (a.val.len(),b.val.len());
+        let mut res = Matrix {
+            shape: (x,y),
+            val: vec![0.0; x * y],
+        };
+        for i in 0..x {
+            for j in 0..y {
+                res.val[i*y+j] = a.val[i] * b.val[j];
+            }
+        }
+        res
+    }
     pub fn new(x: usize, y: usize) -> Matrix {
         let normal = Normal::new(0.0, 1.0/x as f64);
         let v = (0..x * y)
@@ -52,6 +65,22 @@ impl Matrix {
             val: v,
         }
     }
+}
+
+#[test]
+fn test_from_vec(){
+    let x = Vector {
+        val: vec![1.0, 3.0],
+    };
+    let y = Vector {
+        val: vec![1.0, 2.0,3.0],
+    };
+    let res = Matrix::from_vec(&x, &y);
+    let m = Matrix {
+        shape: (2, 3),
+        val: vec![1.0, 2.0,3.0,3.0,6.0,9.0],
+    };
+    assert_eq!(m,res);
 }
 
 #[test]
