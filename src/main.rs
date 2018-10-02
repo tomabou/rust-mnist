@@ -16,7 +16,7 @@ fn main() {
 
     for _ in 0..100{
         let mut loss = 0.0;
-        for i in 0..100{
+        for i in 0..1000{
             let v = Vector::from_data(&test.image[0]);
             let res = network.forward(v);
             loss += res.val[test.label[0] as usize];
