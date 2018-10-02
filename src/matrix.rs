@@ -29,19 +29,6 @@ impl Matrix {
             self.val[i] *= m;
         }
     }
-    pub fn transpose(m: &Matrix) -> Matrix {
-        let (x, y) = m.shape;
-        let mut res = Matrix {
-            shape: (y, x),
-            val: vec![0.0; x * y],
-        };
-        for i in 0..x {
-            for j in 0..y {
-                res.val[j * y + i] = m.val[i * x + j];
-            }
-        }
-        res
-    }
     pub fn from_vec(a: &Vector,b: &Vector) -> Matrix{
         let (x, y) = (a.val.len(),b.val.len());
         let mut res = Matrix {
@@ -102,24 +89,10 @@ fn test_add() {
     };
     assert_eq!(m, ans);
 }
-#[test]
-fn test_transpose() {
-    let n = Matrix {
-        shape: (2, 2),
-        val: vec![1.0, 2.0, 3.0, 4.0],
-    };
-    assert_eq!(
-        Matrix::transpose(&n),
-        Matrix {
-            shape: (2, 2),
-            val: vec![1.0, 3.0, 2.0, 4.0]
-        }
-    );
-}
 pub fn mat_tmul(m: &Matrix, v: &Vector) -> Vector {
     assert!(m.shape.0 == v.val.len());
     let mut res = Vector {
-        val: vec![0.0; m.shape.0],
+        val: vec![0.0; m.shape.1],
     };
     for i in 0..m.shape.0 {
         for j in 0..m.shape.1 {
@@ -236,6 +209,7 @@ impl Vector {
         Vector{val:v}
     }
     pub fn back(&self, a: &Vector) -> Vector{
+        assert_eq!(self.val.len(),a.val.len());
         let mut res = Vector {
             val: vec![0.0; a.val.len()],
         };
