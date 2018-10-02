@@ -35,12 +35,12 @@ impl Network {
             h0: Vector::new(i),
             h1: Vector::new(i),
             h2: Vector::new(i),
-            dw1: Matrix::new(i, h),
-            dw2: Matrix::new(h, h),
-            dw3: Matrix::new(h, c),
-            db1: Vector::new(h),
-            db2: Vector::new(h),
-            db3: Vector::new(c),
+            dw1: Matrix::zero(i, h),
+            dw2: Matrix::zero(h, h),
+            dw3: Matrix::zero(h, c),
+            db1: Vector::zero(h),
+            db2: Vector::zero(h),
+            db3: Vector::zero(c),
         }
     }
 
@@ -51,6 +51,7 @@ impl Network {
         self.a2 = matrix::mat_mul(&self.w2, &self.h1).add(&self.b2);
         self.h2 = Vector::relu(&self.a2);
         let y = matrix::mat_mul(&self.w3, &self.h2).add(&self.b3);
+        //println!("{:?}",y );
         Vector::softmax(&y)
     }
     pub fn backward(&mut self, gy: Vector) {
@@ -89,10 +90,13 @@ impl Network {
     }
 
     pub fn update(&mut self) {
-        let lr = -0.0001;
+        let lr = -0.00005;
         self.b1.mut_madd(&self.db1, lr);
         self.b2.mut_madd(&self.db2, lr);
         self.b3.mut_madd(&self.db3, lr);
+        self.w1.times(0.9995);
+        self.w2.times(0.9995);
+        self.w3.times(0.9995);
         self.w1.mut_madd(&self.dw1, lr);
         self.w2.mut_madd(&self.dw2, lr);
         self.w3.mut_madd(&self.dw3, lr);

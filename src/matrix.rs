@@ -52,6 +52,12 @@ impl Matrix {
             val: v,
         }
     }
+    pub fn zero(x: usize, y: usize) -> Matrix {
+        Matrix {
+            shape: (x, y),
+            val: vec![0.0;x*y],
+        }
+    }
 }
 
 #[test]
@@ -185,6 +191,9 @@ impl Vector {
             .map(|_| normal.sample(&mut rand::thread_rng()) as f32)
             .collect();
         Vector { val: v }
+    }
+    pub fn zero(x: usize) -> Vector {
+        Vector { val: vec![0.0;x] }
     }
     pub fn softmax(x: &Vector) -> Vector {
         let mut v = x.val.clone();

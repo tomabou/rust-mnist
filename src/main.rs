@@ -14,14 +14,15 @@ fn main() {
 
     let mut network = Network::new(28 * 28, 256, 10);
 
-    for _ in 0..100{
+    for _ in 0..1000{
         let mut loss = 0.0;
         for i in 0..1000{
-            let v = Vector::from_data(&test.image[0]);
+            let v = Vector::from_data(&test.image[i]);
             let res = network.forward(v);
-            loss += res.val[test.label[0] as usize];
+            //println!("{:?}",res);
+            loss += res.val[test.label[i] as usize];
             let mut dres = res.clone();
-            dres.sub_label(test.label[0] as usize);
+            dres.sub_label(test.label[i] as usize);
             network.backward(dres);
             network.update();
         }
