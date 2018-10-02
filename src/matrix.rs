@@ -2,25 +2,34 @@ use rand;
 use rand::distributions::{Distribution, Normal};
 use std::f32;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq,Clone)]
 pub struct Matrix {
     shape: (usize, usize),
     val: Vec<f32>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq,Clone)]
 pub struct Vector {
     val: Vec<f32>,
 }
 
 impl Matrix {
-    fn add(&mut self, m: &Matrix) {
-        assert_eq!(self.shape, m.shape);
-        for i in 0..self.shape.0 * self.shape.1 {
+    pub fn mut_add(&mut self, m: &Matrix) {
+        for i in 0..self.val.len(){
             self.val[i] += m.val[i];
         }
     }
-    fn transpose(m: &Matrix) -> Matrix {
+    pub fn mut_madd(&mut self, m: &Matrix,x: f32) {
+        for i in 0..self.val.len(){
+            self.val[i] += m.val[i]*x;
+        }
+    }
+    pub fn times(&mut self, m: f32){
+        for i in 0..self.val.len(){
+            self.val[i] *= m;
+        }
+    }
+    pub fn transpose(m: &Matrix) -> Matrix {
         let (x, y) = m.shape;
         let mut res = Matrix {
             shape: (y, x),
@@ -57,7 +66,7 @@ fn test_add() {
     };
     println!("{:?}", m);
     assert_eq!(m, n);
-    m.add(&n);
+    m.mut_add(&n);
     let ans = Matrix {
         shape: (2, 2),
         val: vec![2.0, 4.0, 6.0, 8.0],
@@ -75,6 +84,34 @@ fn test_transpose() {
         Matrix {
             shape: (2, 2),
             val: vec![1.0, 3.0, 2.0, 4.0]
+        }
+    );
+}
+pub fn mat_tmul(m: &Matrix, v: &Vector) -> Vector {
+    assert!(m.shape.0 == v.val.len());
+    let mut res = Vector {
+        val: vec![0.0; m.shape.0],
+    };
+    for i in 0..m.shape.0 {
+        for j in 0..m.shape.1 {
+            res.val[j] += m.val[i * m.shape.1 + j] * v.val[i];
+        }
+    }
+    res
+}
+#[test]
+fn test_tmut_mul() {
+    let x = Matrix {
+        shape: (2, 2),
+        val: vec![1.0, 2.0, 3.0, 4.0],
+    };
+    let y = Vector {
+        val: vec![1.0, 2.0],
+    };
+    assert_eq!(
+        mat_tmul(&x, &y),
+        Vector {
+            val: vec![7.0, 10.0]
         }
     );
 }
@@ -109,11 +146,26 @@ fn test_mut_mul() {
 }
 
 impl Vector {
+    pub fn mut_add(&mut self, m: &Vector) {
+        for i in 0..self.val.len(){
+            self.val[i] += m.val[i];
+        }
+    }
+    pub fn mut_madd(&mut self, m: &Vector, x: f32) {
+        for i in 0..self.val.len(){
+            self.val[i] += m.val[i] * x;
+        }
+    }
     pub fn add(mut self, m: &Vector)->Vector {
         for i in 0..self.val.len(){
             self.val[i] += m.val[i];
         }
         self
+    }
+    pub fn times(&mut self, m: f32){
+        for i in 0..self.val.len(){
+            self.val[i] *= m;
+        }
     }
     pub fn relu(v: &Vector) -> Vector {
         let mut res = Vector {
@@ -153,6 +205,15 @@ impl Vector {
             *x as f32
         }).collect();
         Vector{val:v}
+    }
+    pub fn back(&self, a: &Vector) -> Vector{
+        let mut res = Vector {
+            val: vec![0.0; a.val.len()],
+        };
+        for i in 0..a.val.len() {
+            res.val[i] = if a.val[i] > 0.0 { self.val[i] } else { 0.0 };
+        }
+        res
     }
 }
 #[test]
