@@ -34,7 +34,7 @@ impl Matrix {
         res
     }
     pub fn new(x: usize, y: usize) -> Matrix {
-        let normal = Normal::new(0.0, 1.0);
+        let normal = Normal::new(0.0, 1.0/x as f64);
         let v = (0..x * y)
             .map(|_| normal.sample(&mut rand::thread_rng()) as f32)
             .collect();
@@ -148,6 +148,12 @@ impl Vector {
         }
         Vector{val:v}
     }
+    pub fn from_data(d: &[u8]  ) -> Vector{
+        let v = d.into_iter().map(|x|{
+            *x as f32
+        }).collect();
+        Vector{val:v}
+    }
 }
 #[test]
 fn test_softmax(){
@@ -159,7 +165,7 @@ fn test_softmax(){
     };
     assert_eq!(Vector::softmax(&y),x);
     let z = Vector {
-        val: vec![2.0, 1.0],
+        val: vec![2.0, 1.0,0.0],
     };
     println!("{:?}",Vector::softmax(&z))
 }

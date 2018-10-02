@@ -1,6 +1,6 @@
 pub struct DataSet {
-    label: Vec<u8>,
-    image: Vec<[u8; 28 * 28]>,
+    pub label: Vec<u8>,
+    pub image: Vec<[u8; 28 * 28]>,
 }
 
 use std::io::{BufReader, Read};
