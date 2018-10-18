@@ -19,6 +19,12 @@ pub struct Network {
     db1: Vector,
     db2: Vector,
     db3: Vector,
+    gw1: Matrix,
+    gw2: Matrix,
+    gw3: Matrix,
+    gb1: Vector,
+    gb2: Vector,
+    gb3: Vector,
 }
 
 impl Network {
