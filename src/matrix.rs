@@ -55,7 +55,7 @@ impl Matrix {
     pub fn zero(x: usize, y: usize) -> Matrix {
         Matrix {
             shape: (x, y),
-            val: vec![0.0;x*y],
+            val: vec![0.0; x * y],
         }
     }
 }
@@ -193,16 +193,16 @@ impl Vector {
         Vector { val: v }
     }
     pub fn zero(x: usize) -> Vector {
-        Vector { val: vec![0.0;x] }
+        Vector { val: vec![0.0; x] }
     }
     pub fn softmax(x: &Vector) -> Vector {
         let mut v = x.val.clone();
         let mut max = 0.0;
-        for k in &x.val{
-            max = if *k > max {*k} else {max};
+        for k in &x.val {
+            max = if *k > max { *k } else { max };
         }
         for i in 0..v.len() {
-            v[i] = (x.val[i]-max).exp();
+            v[i] = (x.val[i] - max).exp();
         }
         let mut sum = 0.0;
         for t in &v {
@@ -227,7 +227,7 @@ impl Vector {
         }
         res
     }
-    pub fn sub_label(&mut self, label: usize){
+    pub fn sub_label(&mut self, label: usize) {
         self.val[label] -= 1.0;
     }
 }
