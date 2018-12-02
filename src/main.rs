@@ -14,9 +14,9 @@ fn main() {
 
     let mut network = Network::new(28 * 28, 256, 10);
 
-    for _ in 0..1000{
+    for _ in 0..1000 {
         let mut loss = 0.0;
-        for i in 0..1000{
+        for i in 0..1000 {
             let v = Vector::from_data(&test.image[i]);
             let res = network.forward(v);
             //println!("{:?}",res);
@@ -26,6 +26,6 @@ fn main() {
             network.backward(dres);
             network.update();
         }
-        println!("{:?}", loss/1000.0);
+        println!("{:?}", loss / 1000.0);
     }
 }
